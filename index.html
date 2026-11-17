@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#071512">
 <title>Cermin Qolbu</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--gold:#c9a86a;--gold2:#e8d5a8;--muted:#c8c0ad;--line:rgba(201,168,106,.35);--wa:#25D366}
 html,body{width:100%;height:100%;overflow:hidden;background:#071512;font-family:Inter,system-ui,-apple-system,sans-serif;color:#fff}
+html:fullscreen,html:-webkit-full-screen{width:100%;height:100%}
 a{text-decoration:none;color:inherit;display:block}
 button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
 .page{position:fixed;inset:0;width:100%;height:100%;height:100dvh;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,#123a2d 0%,#071512 55%,#04100c 100%);overflow:hidden}
@@ -33,8 +35,11 @@ h2{font-family:Georgia,serif;font-size:28px;line-height:1.2;font-weight:400;text
 h2 b{color:var(--gold2);font-weight:400}
 .sub{color:var(--muted);font-size:13.5px;line-height:1.65;text-align:center;max-width:520px;margin:0 auto}
 .divider{width:58px;height:1px;background:var(--gold);margin:14px auto;flex-shrink:0}
-.mirror{width:120px;height:120px;border-radius:50%;margin:2px auto 10px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(232,213,168,.35),rgba(15,46,38,.1) 60%,transparent);flex-shrink:0}
-.mirror span{font-size:48px}
+/* LOGO MENGISI PENUH BULATAN */
+.mirror{width:150px;height:150px;border-radius:50%;margin:2px auto 12px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(232,213,168,.35),rgba(15,46,38,.1) 60%,transparent);flex-shrink:0;box-shadow:0 0 0 6px rgba(201,168,106,.12),0 10px 30px rgba(0,0,0,.4)}
+.mirror img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:50%}
+.mirror .fallback{font-size:52px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.mirror img[src]{position:relative;z-index:2}
 .card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:14px}
 .card h3{font-family:Georgia,serif;font-size:17px;font-weight:400;margin-bottom:6px}
 .card p{font-size:13.5px;line-height:1.65;color:#e8e0cc}
@@ -79,14 +84,18 @@ select.input{appearance:none}
 <div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
 <div class="top"><div class="brand">DEKA SONJAYA<small>MODERN SPIRITUAL</small></div><div class="pill">CEK HATI HARIAN</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
 <div class="center">
-<div class="mirror"><span>✦</span></div>
+<!-- LOGO.PNG MENGISI BULATAN -->
+<div class="mirror">
+<span class="fallback">✦</span>
+<img src="logo.png" alt="Logo Cermin Qolbu" onerror="this.style.display='none'">
+</div>
 <div class="kicker">CERMIN QOLBU</div>
 <h1>Ngaca Dulu,<br><b>Sebelum Keluar Rumah</b></h1>
 <div class="divider"></div>
 <p class="sub">Qolbu itu cermin. Kalau cerminnya bersih, cahaya Ruh bisa masuk. Kalau kotor, hidup jadi gelap walau Mataharinya tetap bersinar.</p>
 <div class="howto"><b>📌 Cara Pakai - Cuma 1 Menit</b><p>🌅 <b>Pagi 06:00:</b> Pengingat Cek Hati Pagi masuk → klik perasaanmu<br>🌙 <b>Malam 20:00:</b> Pengingat WA masuk → isi Jurnal Syukur + Perbaiki<br>📊 <b>7 hari kemudian:</b> Lihat pola hatimu di Jurnal</p></div>
 </div>
-<div class="bottom"><a class="btn" href="#p2">Mulai Cek Hati Pagi →</a><a class="btn ghost" href="#pWA">💬 Atur Pengingat Pagi & Malam →</a><p class="small-note">Untuk full screen permanen: Chrome → ⋮ → Tambahkan ke Layar Utama</p></div>
+<div class="bottom"><a class="btn" href="#p2">Mulai Cek Hati Pagi →</a><a class="btn ghost" href="#pWA">💬 Atur Pengingat Pagi & Malam →</a><p class="small-note">Klik tombol apa pun, aplikasi langsung masuk mode Layar Penuh</p></div>
 </section>
 
 <section class="page" id="p2">
@@ -138,7 +147,6 @@ select.input{appearance:none}
 </div>
 </section>
 
-<!-- PWA - 2 PENGINGAT: PAGI + MALAM -->
 <section class="page" id="pWA">
 <div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
 <div class="top"><div class="brand">CERMIN QOLBU<small>PENGINGAT</small></div><div class="pill">SEKALI ATUR</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
@@ -195,7 +203,25 @@ select.input{appearance:none}
 </section>
 
 <script>
-function toggleFS(){ try{ if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); } else if(document.exitFullscreen) document.exitFullscreen(); }catch(e){} }
+// FULLSCREEN OTOMATIS: setiap klik tombol / link langsung masuk fullscreen
+function goFullscreen(){
+  try{
+    var el = document.documentElement;
+    if(!document.fullscreenElement && el.requestFullscreen){ el.requestFullscreen().catch(function(){}); }
+    else if(!document.fullscreenElement && el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
+  }catch(e){}
+}
+function toggleFS(){
+  try{
+    if(!document.fullscreenElement){ goFullscreen(); }
+    else if(document.exitFullscreen){ document.exitFullscreen(); }
+  }catch(e){}
+}
+// Tangkap SEMUA klik tombol & link di aplikasi -> langsung fullscreen
+document.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('a, button');
+  if(t){ goFullscreen(); }
+});
 var META={tenang:{emo:'🌿',label:'Tenang • Bersih'},sesak:{emo:'🌫️',label:'Sesak • Berdebu'},marah:{emo:'🔥',label:'Marah • Berdebu Tebal'},hampa:{emo:'🌑',label:'Hampa • Tertutup'},sedih:{emo:'🌧️',label:'Sedih • Berembun'}};
 function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function loadJurnal(){try{return JSON.parse(localStorage.getItem('cermin_qolbu_jurnal')||'{}');}catch(e){return{};}}
@@ -242,8 +268,7 @@ function buatPesanWA(){
 function kirimWA(){
   var no=getWa();
   if(!no){ if(confirm('Nomor WA belum diisi. Isi dulu di Pengaturan Pengingat?')){ location.hash='#pWA'; } return; }
-  var pesan=buatPesanWA();
-  window.open('https://wa.me/'+no+'?text='+encodeURIComponent(pesan),'_blank');
+  window.open('https://wa.me/'+no+'?text='+encodeURIComponent(buatPesanWA()),'_blank');
 }
 function renderJurnal(){
   var list=document.getElementById('jurnalList'); if(!list) return;
@@ -259,12 +284,10 @@ function renderJurnal(){
 function hapusJurnal(){ if(confirm('Hapus semua riwayat jurnal?')){ try{localStorage.removeItem('cermin_qolbu_jurnal');}catch(e){} renderJurnal(); } }
 function cekPengingat(){
   var now=new Date(); var hh=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  // PAGI
   if(getReminderOn('pagi') && hh===getJamPagi()){
     var lastP=''; try{ lastP=localStorage.getItem('cermin_qolbu_last_pagi')||''; }catch(e){}
     if(lastP!==todayKey()){ try{localStorage.setItem('cermin_qolbu_last_pagi',todayKey());}catch(e){} var msgP='Cek Hati Pagi dulu, cerminmu hari ini gimana?'; if('Notification' in window && Notification.permission==='granted'){ try{ new Notification('Cermin Qolbu - Cek Hati Pagi 🌅', {body: msgP}); }catch(e){} } alert('🌅 Cermin Qolbu:\n\n'+msgP); location.hash='#p2'; }
   }
-  // MALAM
   if(getReminderOn('malam') && hh===getJam()){
     var last=''; try{ last=localStorage.getItem('cermin_qolbu_last_reminder')||''; }catch(e){}
     if(last!==todayKey()){ try{localStorage.setItem('cermin_qolbu_last_reminder',todayKey());}catch(e){} var msg='Sudah isi Jurnal Malam belum? Malam ini apa yang kamu syukuri, dan apa yang mau kamu perbaiki besok?'; if('Notification' in window && Notification.permission==='granted'){ try{ new Notification('Cermin Qolbu - Jurnal Malam 🌙', {body: msg}); }catch(e){} } alert('🌙 Cermin Qolbu:\n\n'+msg); location.hash='#p5'; }
