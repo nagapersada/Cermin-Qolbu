@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#071512">
+<title>Cermin Qolbu</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--gold:#c9a86a;--gold2:#e8d5a8;--muted:#c8c0ad;--line:rgba(201,168,106,.35);--wa:#25D366}
+html,body{width:100%;height:100%;overflow:hidden;background:#071512;font-family:Inter,system-ui,-apple-system,sans-serif;color:#fff}
+html:fullscreen,html:-webkit-full-screen{width:100%;height:100%}
+a{text-decoration:none;color:inherit;display:block}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+.page{position:fixed;inset:0;width:100%;height:100%;height:100dvh;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,#123a2d 0%,#071512 55%,#04100c 100%);overflow:hidden}
+.page:target{display:flex}
+body:not(:has(:target)) #p1{display:flex}
+.frame{position:absolute;inset:10px;border:1px solid var(--line);border-radius:6px;pointer-events:none;z-index:1}
+.frame:before{content:"";position:absolute;inset:5px;border:1px solid rgba(201,168,106,.18);border-radius:4px}
+.corner{position:absolute;width:36px;height:36px;border:2px solid var(--gold2);pointer-events:none;z-index:1}
+.tl{top:10px;left:10px;border-right:none;border-bottom:none}.tr{top:10px;right:10px;border-left:none;border-bottom:none}.bl{bottom:10px;left:10px;border-right:none;border-top:none}.br{bottom:10px;right:10px;border-left:none;border-top:none}
+.top{padding:calc(16px + env(safe-area-inset-top)) 28px 0;display:flex;justify-content:space-between;align-items:center;z-index:2;flex-shrink:0;gap:8px}
+.brand{font-size:11px;letter-spacing:.22em;color:var(--gold2);font-weight:700;line-height:1.4;flex:1}
+.brand small{display:block;letter-spacing:.12em;color:var(--muted);font-weight:400;font-size:10px}
+.pill{font-size:10px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--gold2);white-space:nowrap}
+.fsBtn{width:36px;height:36px;min-width:36px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gold2)}
+.audioBtn{width:36px;height:36px;min-width:36px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--gold2);background:rgba(201,168,106,.15)}
+.audioModal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99;display:none;align-items:flex-end;justify-content:center}
+.audioModal.open{display:flex}
+.audioBox{width:100%;max-width:520px;background:#0f2e26;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:20px 22px calc(20px + env(safe-area-inset-bottom))}
+.audioBox h3{font-family:Georgia,serif;font-size:20px;font-weight:400}
+.audioBox p{font-size:13px;line-height:1.6;color:var(--muted);margin-top:6px}
+.audioBox audio{width:100%;margin-top:14px;outline:none}
+.audioClose{float:right;font-size:24px;line-height:1;color:var(--gold2)}
+.center{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding:16px 28px;overflow-y:auto;z-index:2}
+.kicker{font-size:11px;letter-spacing:.28em;color:var(--gold);text-align:center}
+h1{font-family:Georgia,serif;font-size:34px;line-height:1.1;text-align:center;margin:10px 0;font-weight:400}
+h1 b{color:var(--gold2);font-weight:400}
+h2{font-family:Georgia,serif;font-size:28px;line-height:1.2;font-weight:400;text-align:center}
+h2 b{color:var(--gold2);font-weight:400}
+.sub{color:var(--muted);font-size:13.5px;line-height:1.65;text-align:center;max-width:520px;margin:0 auto}
+.divider{width:58px;height:1px;background:var(--gold);margin:14px auto;flex-shrink:0}
+.mirror{width:150px;height:150px;border-radius:50%;margin:2px auto 12px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(232,213,168,.35),rgba(15,46,38,.1) 60%,transparent);flex-shrink:0;box-shadow:0 0 0 6px rgba(201,168,106,.12),0 10px 30px rgba(0,0,0,.4)}
+.mirror img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:50%}
+.mirror .fallback{font-size:52px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.mirror img[src]{position:relative;z-index:2}
+.card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card h3{font-family:Georgia,serif;font-size:17px;font-weight:400;margin-bottom:6px}
+.card p{font-size:13.5px;line-height:1.65;color:#e8e0cc}
+.card p b{color:var(--gold2)}
+.opt{width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-top:10px;display:flex;gap:12px;align-items:center}
+.opt:active{background:rgba(201,168,106,.22)}
+.opt b{font-size:14px;display:block}.opt small{color:var(--muted);font-size:12px;line-height:1.5;display:block;margin-top:2px}
+.opt .emo{font-size:22px}
+.badge{display:inline-block;font-size:11px;letter-spacing:.16em;padding:7px 12px;border:1px solid var(--gold);border-radius:999px;color:var(--gold2)}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.mini{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;min-height:88px;display:flex;flex-direction:column;justify-content:center}
+.mini.today{border-color:var(--gold);background:rgba(201,168,106,.15)}
+.mini b{font-size:13px;display:block}.mini small{color:var(--muted);font-size:11px;line-height:1.5;display:block;margin-top:4px}
+.mini .n{font-size:20px}.mini .date{font-size:10px;color:var(--gold2);letter-spacing:.08em}
+.input{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;padding:13px;color:#fff;font-size:14px;outline:none;margin-top:10px}
+.input::placeholder{color:#9a9380}
+select.input{appearance:none}
+.bottom{padding:12px 28px calc(18px + env(safe-area-inset-bottom));z-index:3;flex-shrink:0;background:linear-gradient(180deg,transparent,rgba(4,16,12,.9) 30%)}
+.btn{width:100%;background:linear-gradient(180deg,#e8d5a8,#c9a86a);color:#0f2e26;font-weight:800;font-size:15px;padding:15px;border-radius:999px;text-align:center}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:#fff;font-weight:600;margin-top:10px}
+.btn.wa{background:var(--wa);color:#062e16;font-weight:800;margin-top:10px}
+.btn.danger{background:transparent;border:1px solid rgba(255,120,120,.4);color:#ffb3b3;font-weight:600;margin-top:10px;font-size:13px;padding:12px}
+.progress{display:flex;gap:6px;justify-content:center;margin:0 0 8px}
+.dot{width:26px;height:4px;border-radius:99px;background:rgba(255,255,255,.18)}
+.dot.on{background:var(--gold)}
+.row{display:flex;gap:10px}.row .btn{flex:1}
+.small-note{font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:8px}
+.howto{background:rgba(201,168,106,.1);border:1px dashed var(--line);border-radius:14px;padding:13px;margin-top:12px}
+.howto b{font-size:13px;color:var(--gold2);display:block;margin-bottom:4px}
+.howto p{font-size:12.5px;line-height:1.65;color:#e8e0cc}
+.toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;text-align:left}
+.toggle b{font-size:14px;display:block}.toggle small{color:var(--muted);font-size:12px}
+.switch{width:52px;height:28px;border-radius:99px;background:rgba(255,255,255,.2);position:relative;flex-shrink:0;transition:.2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}
+.switch.on{background:var(--wa)}.switch.on:after{left:27px}
+@media(min-width:700px){h1{font-size:48px}.center{padding:20px 22vw}}
+</style>
+</head>
+<body>
+
+<!-- P1 HALAMAN PEMBUKA -->
+<section class="page" id="p1">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">DEKA SONJAYA<small>MODERN SPIRITUAL</small></div><div class="pill">CEK HATI HARIAN</div><button class="audioBtn" type="button" onclick="bukaAudio()" title="Dengarkan Tutorial">🔊</button><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="mirror"><span class="fallback">✦</span><img src="logo.png" alt="Logo Cermin Qolbu" onerror="this.style.display='none'"></div>
+<div class="kicker">CERMIN QOLBU</div>
+<h1>Ngaca Dulu,<br><b>Sebelum Keluar Rumah</b></h1>
+<div class="divider"></div>
+<p class="sub">Qolbu itu cermin. Kalau cerminnya bersih, cahaya Ruh bisa masuk. Kalau kotor, hidup jadi gelap walau Mataharinya tetap bersinar.</p>
+<div class="howto"><b>📌 Cara Pakai - Cuma 1 Menit</b><p>🌅 <b>Pagi 06:00:</b> Pengingat Cek Hati Pagi masuk → klik perasaanmu<br>🌙 <b>Malam 20:00:</b> Pengingat WA masuk → isi Jurnal Syukur + Perbaiki<br>📊 <b>7 hari kemudian:</b> Lihat pola hatimu di Jurnal<br>🔊 <b>Bingung?</b> Klik ikon speaker di pojok kanan atas untuk dengarkan tutorial</p></div>
+</div>
+<div class="bottom"><a class="btn" href="#p2">Mulai Cek Hati Pagi →</a><a class="btn ghost" href="#pWA">💬 Atur Pengingat Pagi & Malam →</a><p class="small-note">Klik tombol apa pun, aplikasi langsung masuk mode Layar Penuh</p></div>
+</section>
+
+<!-- P2 CEK HATI -->
+<section class="page" id="p2">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">CERMIN QOLBU<small>CEK HATI PAGI</small></div><div class="pill">LANGKAH 1 / 3</div><button class="audioBtn" type="button" onclick="bukaAudio()" title="Dengarkan Tutorial">🔊</button><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="kicker">JUJUR SAMA HATI SENDIRI</div>
+<h2>Hari ini hatimu<br><b>terasa gimana?</b></h2>
+<div class="divider"></div>
+<p class="sub">Klik salah satu. Pilihanmu <b style="color:var(--gold2)">langsung tersimpan</b> untuk hari ini.</p>
+<a class="opt" href="#p3-tenang" data-save="tenang"><span class="emo">🌿</span><span><b>Tenang & Lapang</b><small>Hati ringan, mudah bersyukur →</small></span></a>
+<a class="opt" href="#p3-sesak" data-save="sesak"><span class="emo">🌫️</span><span><b>Sesak, Banyak Pikiran</b><small>Kepala penuh, dada terasa berat →</small></span></a>
+<a class="opt" href="#p3-marah" data-save="marah"><span class="emo">🔥</span><span><b>Mudah Marah / Tersinggung</b><small>Kecil saja terasa besar →</small></span></a>
+<a class="opt" href="#p3-hampa" data-save="hampa"><span class="emo">🌑</span><span><b>Hampa</b><small>Sholat tapi tidak terasa apa-apa →</small></span></a>
+<a class="opt" href="#p3-sedih" data-save="sedih"><span class="emo">🌧️</span><span><b>Sedih / Kecewa</b><small>Ada yang masih tersimpan di hati →</small></span></a>
+</div>
+<div class="bottom"><div class="progress"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div><a class="btn ghost" href="#p1">← Kembali</a></div>
+</section>
+
+<!-- HASIL -->
+<section class="page" id="p3-tenang"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>HASIL</small></div><div class="pill">LANGKAH 2 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div style="text-align:center"><span class="badge">CERMIN BERSIH • TERSIMPAN</span></div><h2 style="margin-top:12px">Cerminmu Hari Ini<br><b>Bersih</b></h2><div class="divider"></div><div class="card"><h3>🪞 Perumpamaannya</h3><p>Matahari tetap bersinar, cerminmu bersih. Pantulannya jernih, ruangan terang.</p></div><div class="card" style="margin-top:10px"><h3>📖 Ayatnya</h3><p><i>“Sungguh beruntung orang yang menyucikan jiwanya.”</i><br><b>QS. Asy-Syams : 9</b></p></div></div><div class="bottom"><a class="btn" href="#p4-tenang">Amalan Kecil Hari Ini →</a><a class="btn ghost" href="#p2">← Pilih Lagi</a></div></section>
+<section class="page" id="p3-sesak"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>HASIL</small></div><div class="pill">LANGKAH 2 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div style="text-align:center"><span class="badge">CERMIN BERDEBU • TERSIMPAN</span></div><h2 style="margin-top:12px">Cerminmu Hari Ini<br><b>Berdebu</b></h2><div class="divider"></div><div class="card"><h3>🪞 Perumpamaannya</h3><p>Mataharinya tidak redup. Cerminnya berdebu karena terlalu banyak pikiran menumpuk.</p></div><div class="card" style="margin-top:10px"><h3>📖 Ayatnya</h3><p><i>“Ingatlah, hanya dengan mengingat Allah hati menjadi tenang.”</i><br><b>QS. Ar-Ra’d : 28</b></p></div></div><div class="bottom"><a class="btn" href="#p4-sesak">Amalan Kecil Hari Ini →</a><a class="btn ghost" href="#p2">← Pilih Lagi</a></div></section>
+<section class="page" id="p3-marah"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>HASIL</small></div><div class="pill">LANGKAH 2 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div style="text-align:center"><span class="badge">CERMIN BERDEBU TEBAL • TERSIMPAN</span></div><h2 style="margin-top:12px">Cerminmu Hari Ini<br><b>Berdebu Tebal</b></h2><div class="divider"></div><div class="card"><h3>🪞 Perumpamaannya</h3><p>Debu paling tebal itu dendam. Kalau tidak dibersihkan, hal kecil terasa besar.</p></div><div class="card" style="margin-top:10px"><h3>📖 Ayatnya</h3><p><i>“Maka berkat rahmat Allah, engkau berlaku lemah lembut.”</i><br><b>QS. Ali Imran : 159</b></p></div></div><div class="bottom"><a class="btn" href="#p4-marah">Amalan Kecil Hari Ini →</a><a class="btn ghost" href="#p2">← Pilih Lagi</a></div></section>
+<section class="page" id="p3-hampa"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>HASIL</small></div><div class="pill">LANGKAH 2 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div style="text-align:center"><span class="badge">CERMIN TERTUTUP • TERSIMPAN</span></div><h2 style="margin-top:12px">Cerminmu Hari Ini<br><b>Tertutup</b></h2><div class="divider"></div><div class="card"><h3>🪞 Perumpamaannya</h3><p>Cermin tertutup total, tidak ada cahaya masuk. Jasad hidup, tapi Ruh tidak terasa.</p></div><div class="card" style="margin-top:10px"><h3>📖 Ayatnya</h3><p><i>“Allah adalah Cahaya langit dan bumi.”</i><br><b>QS. An-Nur : 35</b></p></div></div><div class="bottom"><a class="btn" href="#p4-hampa">Amalan Kecil Hari Ini →</a><a class="btn ghost" href="#p2">← Pilih Lagi</a></div></section>
+<section class="page" id="p3-sedih"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>HASIL</small></div><div class="pill">LANGKAH 2 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div style="text-align:center"><span class="badge">CERMIN BEREMBUN • TERSIMPAN</span></div><h2 style="margin-top:12px">Cerminmu Hari Ini<br><b>Berembun</b></h2><div class="divider"></div><div class="card"><h3>🪞 Perumpamaannya</h3><p>Embun itu air mata yang belum jatuh. Masih bisa dibersihkan, asal tidak dibiarkan jadi karat.</p></div><div class="card" style="margin-top:10px"><h3>📖 Ayatnya</h3><p><i>“Sungguh telah datang kepadamu Rasul yang berat terasa olehnya penderitaanmu.”</i><br><b>QS. At-Taubah : 128</b></p></div></div><div class="bottom"><a class="btn" href="#p4-sedih">Amalan Kecil Hari Ini →</a><a class="btn ghost" href="#p2">← Pilih Lagi</a></div></section>
+
+<!-- AMALAN -->
+<section class="page" id="p4-tenang"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>AMALAN</small></div><div class="pill">LANGKAH 3 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div class="kicker">CUMA SATU, TAPI IKHLAS</div><h2>Syukuri 1 Hal Kecil<br><b>Hari Ini</b></h2><div class="divider"></div><div class="card"><h3>Amalan</h3><p>Sebut 1 hal yang kamu syukuri, ucapkan <b>Alhamdulillah</b> dengan pelan.</p></div><div class="card" style="margin-top:10px"><h3>🤲 Doanya</h3><p><i>“Ya Allah, bersihkan cerminku.”</i> Baca pelan 3x.</p></div></div><div class="bottom"><a class="btn" href="#p5">Lanjut ke Muhasabah Malam →</a><a class="btn ghost" href="#p2">Cek Ulang Hati</a></div></section>
+<section class="page" id="p4-sesak"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>AMALAN</small></div><div class="pill">LANGKAH 3 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div class="kicker">CUMA SATU, TAPI IKHLAS</div><h2>Istighfar 7x<br><b>Dengan Tenang</b></h2><div class="divider"></div><div class="card"><h3>Amalan</h3><p>Ucapkan <b>Astaghfirullah</b> 7x pelan. Bayangkan 1 debu terangkat tiap istighfar.</p></div><div class="card" style="margin-top:10px"><h3>🤲 Doanya</h3><p><i>“Ya Allah, bersihkan cerminku.”</i> Baca pelan 3x.</p></div></div><div class="bottom"><a class="btn" href="#p5">Lanjut ke Muhasabah Malam →</a><a class="btn ghost" href="#p2">Cek Ulang Hati</a></div></section>
+<section class="page" id="p4-marah"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>AMALAN</small></div><div class="pill">LANGKAH 3 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div class="kicker">CUMA SATU, TAPI IKHLAS</div><h2>Maafkan 1 Orang<br><b>Dalam Hati</b></h2><div class="divider"></div><div class="card"><h3>Amalan</h3><p>Sebut namanya dalam hati: <b>“Saya maafkan, Ya Allah, lapangkan hati saya.”</b></p></div><div class="card" style="margin-top:10px"><h3>🤲 Doanya</h3><p><i>“Ya Allah, bersihkan cerminku.”</i> Baca pelan 3x.</p></div></div><div class="bottom"><a class="btn" href="#p5">Lanjut ke Muhasabah Malam →</a><a class="btn ghost" href="#p2">Cek Ulang Hati</a></div></section>
+<section class="page" id="p4-hampa"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>AMALAN</small></div><div class="pill">LANGKAH 3 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div class="kicker">CUMA SATU, TAPI IKHLAS</div><h2>Zikir Pelan<br><b>3 Menit</b></h2><div class="divider"></div><div class="card"><h3>Amalan</h3><p>Duduk, pejamkan mata. Ucapkan <b>Allah... Allah...</b> pelan 3 menit.</p></div><div class="card" style="margin-top:10px"><h3>🤲 Doanya</h3><p><i>“Ya Allah, bersihkan cerminku.”</i> Baca pelan 3x.</p></div></div><div class="bottom"><a class="btn" href="#p5">Lanjut ke Muhasabah Malam →</a><a class="btn ghost" href="#p2">Cek Ulang Hati</a></div></section>
+<section class="page" id="p4-sedih"><div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top"><div class="brand">CERMIN QOLBU<small>AMALAN</small></div><div class="pill">LANGKAH 3 / 3</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div><div class="center"><div class="kicker">CUMA SATU, TAPI IKHLAS</div><h2>Cerita ke Allah<br><b>1 Menit</b></h2><div class="divider"></div><div class="card"><h3>Amalan</h3><p>Ucapkan dalam hati: <b>“Ya Allah, saya sedih karena...”</b> Ceritakan sejujurnya.</p></div><div class="card" style="margin-top:10px"><h3>🤲 Doanya</h3><p><i>“Ya Allah, bersihkan cerminku.”</i> Baca pelan 3x.</p></div></div><div class="bottom"><a class="btn" href="#p5">Lanjut ke Muhasabah Malam →</a><a class="btn ghost" href="#p2">Cek Ulang Hati</a></div></section>
+
+<!-- P5 MUHASABAH -->
+<section class="page" id="p5">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">CERMIN QOLBU<small>MUHASABAH MALAM</small></div><div class="pill">WAJIB ISI MALAM</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="kicker">TUTUP HARI DENGAN TENANG</div>
+<h2>Malam Ini,<br><b>Apa yang Mau Kamu Syukuri?</b></h2>
+<div class="divider"></div>
+<label style="font-size:12px;letter-spacing:.12em;color:var(--gold2);display:block">1. HARI INI YANG SAYA SYUKURI</label>
+<input class="input" id="inSyukur" placeholder="Contoh: Hari ini saya masih diberi sehat...">
+<label style="font-size:12px;letter-spacing:.12em;color:var(--gold2);margin-top:14px;display:block">2. BESOK YANG MAU SAYA PERBAIKI</label>
+<input class="input" id="inPerbaiki" placeholder="Contoh: Besok saya mau lebih sabar...">
+<div class="card" style="margin-top:14px"><h3>🌙 Zikir 3 Menit</h3><p>Istighfar 33x • Alhamdulillah 33x • Tarik nafas, hembuskan, lalu tidur dengan hati yang lapang.</p></div>
+</div>
+<div class="bottom">
+<a class="btn" href="#p6" id="btnSaveMalam">Simpan & Lihat Jurnal 7 Hari →</a>
+<button class="btn wa" type="button" onclick="kirimWA()">💬 Kirim Jurnal Ini ke WA Saya →</button>
+<a class="btn ghost" href="#pWA">⚙️ Atur Nomor WA & Jam Pengingat</a>
+</div>
+</section>
+
+<!-- PWA PENGINGAT -->
+<section class="page" id="pWA">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">CERMIN QOLBU<small>PENGINGAT</small></div><div class="pill">SEKALI ATUR</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="kicker">BIAR TIDAK LUPA PAGI & MALAM</div>
+<h2>Pengingat<br><b>Pagi & Malam</b></h2>
+<div class="divider"></div>
+<p class="sub">Isi nomor WA-mu sekali saja. Nanti pagi dan malam, pengingatnya akan mengajakmu ngaca lagi.</p>
+<label style="font-size:12px;letter-spacing:.12em;color:var(--gold2);margin-top:16px;display:block">NOMOR WA KAMU (CONTOH: 628123456789)</label>
+<input class="input" id="inWa" placeholder="62812xxxxxxx" inputmode="numeric">
+<label style="font-size:12px;letter-spacing:.12em;color:var(--gold2);margin-top:14px;display:block">🌅 JAM PENGINGAT PAGI - CEK HATI PAGI</label>
+<select class="input" id="inJamPagi"><option value="05:00">05:00 - Setelah Subuh</option><option value="06:00" selected>06:00 - Pagi Hari</option><option value="07:00">07:00 - Sebelum Berangkat</option><option value="08:00">08:00 - Mulai Aktivitas</option></select>
+<button class="toggle" type="button" onclick="toggleReminder('pagi')"><span><b>Pengingat Pagi <span id="jamPagiLabel">06:00</span></b><small id="reminderPagiStatus">Belum aktif</small></span><span class="switch" id="switchPagi"></span></button>
+<label style="font-size:12px;letter-spacing:.12em;color:var(--gold2);margin-top:16px;display:block">🌙 JAM PENGINGAT MALAM - JURNAL MALAM</label>
+<select class="input" id="inJam"><option value="19:30">19:30 - Setelah Maghrib</option><option value="20:00" selected>20:00 - Setelah Isya</option><option value="21:00">21:00 - Sebelum Tidur</option><option value="22:00">22:00 - Larut Malam</option></select>
+<button class="toggle" type="button" onclick="toggleReminder('malam')"><span><b>Pengingat Malam <span id="jamLabel">20:00</span></b><small id="reminderStatus">Belum aktif</small></span><span class="switch" id="switchReminder"></span></button>
+<div class="howto"><b>📌 Bagaimana Cara Kerjanya?</b><p><b>Pagi:</b> Notifikasi "Cek Hati Pagi dulu, cerminmu hari ini gimana?" → klik → langsung ke Cek Hati<br><br><b>Malam:</b> Notifikasi "Sudah isi Jurnal Malam belum?" → klik → langsung ke Muhasabah Malam → klik "Kirim ke WA Saya" → chat WA terbuka, isinya sudah jadi, tinggal Kirim</p></div>
+</div>
+<div class="bottom">
+<button class="btn" type="button" onclick="simpanWA()">Simpan Nomor & Jam Pengingat ✓</button>
+<button class="btn wa" type="button" onclick="kirimWA()">💬 Tes Kirim ke WA Saya Sekarang</button>
+<a class="btn ghost" href="#p5">← Kembali ke Muhasabah Malam</a>
+</div>
+</section>
+
+<!-- P6 JURNAL -->
+<section class="page" id="p6">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">CERMIN QOLBU<small>JURNAL 7 HARI</small></div><div class="pill">POLA HATIMU</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="kicker">KENALI POLA HATIMU • TERSIMPAN OTOMATIS</div>
+<h2>7 Hari Terakhir,<br><b>Cerminmu Gimana?</b></h2>
+<div class="divider"></div>
+<p class="sub" id="jurnalInfo">Setiap pilihanmu tersimpan dengan tanggalnya.</p>
+<div class="list" id="jurnalList"></div>
+<div class="howto" id="jurnalEmpty" style="display:none"><b>📌 Belum Ada Data</b><p>Kamu belum cek hati hari ini. Kembali ke Cek Hati, pilih 1 perasaan, lalu kembali ke sini.</p></div>
+<div class="card" style="margin-top:14px"><h3>💬 Cara Baca Polamu</h3><p id="jurnalPesan">Hati itu naik turun, itu wajar. Yang penting, setiap hari ada niat untuk membersihkan.</p></div>
+</div>
+<div class="bottom"><div class="row"><a class="btn ghost" href="#p7">Perumpamaan →</a><a class="btn" href="#p1">Ulangi Besok →</a></div><button type="button" class="btn danger" onclick="hapusJurnal()">Hapus Semua Riwayat Jurnal</button></div>
+</section>
+
+<!-- P7 -->
+<section class="page" id="p7">
+<div class="frame"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="top"><div class="brand">CERMIN QOLBU<small>KARTU PERUMPAMAAN</small></div><div class="pill">BAGIKAN</div><button class="fsBtn" type="button" onclick="toggleFS()">⛶</button></div>
+<div class="center">
+<div class="kicker">MATAHARI • CERMIN • RUANGAN</div>
+<h2>Ingat 3 Hal Ini<br><b>Setiap Hari</b></h2>
+<div class="divider"></div>
+<div class="card"><h3>☀️ Matahari = Ruh</h3><p>Cahaya yang tidak pernah padam.</p></div>
+<div class="card" style="margin-top:10px"><h3>🪞 Cermin = Qolbu</h3><p>Yang menghubungkan Ruh dan Jasad.</p></div>
+<div class="card" style="margin-top:10px"><h3>🏠 Ruangan = Jasad</h3><p>Tanpa cahaya, ruangan gelap.</p></div>
+<div class="card" style="margin-top:10px"><h3>🧹 Cara Membersihkan</h3><p>1. Istighfar untuk debu dosa<br>2. Memaafkan untuk debu dendam<br>3. Berbuat baik diam-diam.</p></div>
+</div>
+<div class="bottom"><a class="btn" href="#p1">Kembali ke Awal →</a><p class="small-note">Deka Sonjaya • Modern Spiritual<br>Cermin Qolbu - Cek Hati Harian</p></div>
+</section>
+
+<!-- MODAL AUDIO TUTORIAL -->
+<div class="audioModal" id="audioModal" onclick="if(event.target===this) tutupAudio()">
+  <div class="audioBox">
+    <button class="audioClose" type="button" onclick="tutupAudio()">×</button>
+    <h3>🔊 Tutorial Cermin Qolbu</h3>
+    <p>Dengarkan dulu 3 menit, biar tidak bingung pakai aplikasinya. Saudaraku bisa dengarkan sambil santai.</p>
+    <!-- NAMA FILE AUDIO: tutorial.mp3 -->
+    <audio controls controlsList="nodownload" preload="metadata" id="audioTutorial">
+      <source src="tutorial.mp3" type="audio/mpeg">
+      Browser kamu tidak mendukung audio.
+    </audio>
+    <p style="margin-top:10px">Kalau audio belum muncul, berarti file tutorial.mp3 belum di-upload. Baca ringkasannya di bawah ini:</p>
+    <div style="max-height:190px;overflow-y:auto;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.7;color:#e8e0cc;margin-top:8px">
+      Assalamu’alaikum warahmatullahi wabarakatuh.<br><br>
+      Saudaraku, di aplikasi ini saya mau ngajarin cara pakai Cermin Qolbu.<br><br>
+      <b>1. Klik Mulai Cek Hati Pagi</b> → langsung masuk mode Layar Penuh.<br>
+      <b>2. Pilih perasaanmu hari ini</b> → Tenang, Sesak, Marah, Hampa, atau Sedih. Pilihanmu langsung tersimpan.<br>
+      <b>3. Baca hasil cerminmu</b> → ada perumpamaan, ayat, dan amalan kecilnya.<br>
+      <b>4. Atur Pengingat Pagi 06:00 & Malam 20:00</b> di menu Atur Pengingat. Isi nomor WA sekali saja.<br>
+      <b>5. Malam isi Jurnal:</b> apa yang disyukuri & apa yang diperbaiki besok. Lalu klik Kirim ke WA Saya.<br>
+      <b>6. 7 hari kemudian</b> lihat pola hatimu di Jurnal 7 Hari.<br><br>
+      Gampang kan? Cuma 1 menit pagi, 1 menit malam. Ngaca dulu, sebelum keluar rumah.<br><br>
+      Wassalamu’alaikum warahmatullahi wabarakatuh.
+    </div>
+  </div>
+</div>
+
+<script>
+function goFullscreen(){ try{ var el=document.documentElement; if(!document.fullscreenElement && el.requestFullscreen){ el.requestFullscreen().catch(function(){}); } else if(!document.fullscreenElement && el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); } }catch(e){} }
+function toggleFS(){ try{ if(!document.fullscreenElement){ goFullscreen(); } else if(document.exitFullscreen){ document.exitFullscreen(); } }catch(e){} }
+function bukaAudio(){ var m=document.getElementById('audioModal'); if(m) m.classList.add('open'); goFullscreen(); }
+function tutupAudio(){ var m=document.getElementById('audioModal'); if(m) m.classList.remove('open'); var a=document.getElementById('audioTutorial'); if(a) a.pause(); }
+document.addEventListener('click', function(e){ var t=e.target.closest && e.target.closest('a, button'); if(t){ goFullscreen(); } });
+var META={tenang:{emo:'🌿',label:'Tenang • Bersih'},sesak:{emo:'🌫️',label:'Sesak • Berdebu'},marah:{emo:'🔥',label:'Marah • Berdebu Tebal'},hampa:{emo:'🌑',label:'Hampa • Tertutup'},sedih:{emo:'🌧️',label:'Sedih • Berembun'}};
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function loadJurnal(){try{return JSON.parse(localStorage.getItem('cermin_qolbu_jurnal')||'{}');}catch(e){return{};}}
+function saveJurnal(j){try{localStorage.setItem('cermin_qolbu_jurnal',JSON.stringify(j));}catch(e){}}
+function getWa(){try{return localStorage.getItem('cermin_qolbu_wa')||'';}catch(e){return'';}}
+function getJam(){try{return localStorage.getItem('cermin_qolbu_jam')||'20:00';}catch(e){return'20:00';}}
+function getJamPagi(){try{return localStorage.getItem('cermin_qolbu_jam_pagi')||'06:00';}catch(e){return'06:00';}}
+function getReminderOn(t){try{return localStorage.getItem('cermin_qolbu_reminder_'+t)==='1';}catch(e){return false;}}
+function simpanWA(){
+  var no=document.getElementById('inWa'); var jam=document.getElementById('inJam'); var jamP=document.getElementById('inJamPagi');
+  var v=no?no.value.replace(/[^0-9]/g,''):'';
+  if(v && v.charAt(0)==='0') v='62'+v.slice(1);
+  if(!v || v.length<10){ alert('Isi nomor WA dulu ya, contoh: 628123456789'); return; }
+  try{ localStorage.setItem('cermin_qolbu_wa',v); if(jam) localStorage.setItem('cermin_qolbu_jam',jam.value); if(jamP) localStorage.setItem('cermin_qolbu_jam_pagi',jamP.value); }catch(e){}
+  updateReminderUI(); alert('Tersimpan! Nomor WA: '+v+' | Pagi: '+(jamP?jamP.value:'06:00')+' | Malam: '+(jam?jam.value:'20:00'));
+}
+function updateReminderUI(){
+  var onM=getReminderOn('malam'); var onP=getReminderOn('pagi');
+  var sw=document.getElementById('switchReminder'); var st=document.getElementById('reminderStatus'); var jl=document.getElementById('jamLabel');
+  var swP=document.getElementById('switchPagi'); var stP=document.getElementById('reminderPagiStatus'); var jlP=document.getElementById('jamPagiLabel');
+  var jam=getJam(); var jamP=getJamPagi();
+  if(jl) jl.textContent=jam; if(jlP) jlP.textContent=jamP;
+  if(sw) sw.className='switch'+(onM?' on':''); if(swP) swP.className='switch'+(onP?' on':'');
+  if(st) st.textContent=onM?'Aktif - Akan mengingatkan tiap malam jam '+jam:'Belum aktif - Klik untuk mengaktifkan';
+  if(stP) stP.textContent=onP?'Aktif - Akan mengingatkan tiap pagi jam '+jamP:'Belum aktif - Klik untuk mengaktifkan';
+  var inp=document.getElementById('inWa'); if(inp && !inp.value) inp.value=getWa();
+  var sel=document.getElementById('inJam'); if(sel) sel.value=jam;
+  var selP=document.getElementById('inJamPagi'); if(selP) selP.value=jamP;
+}
+function toggleReminder(t){
+  var on=!getReminderOn(t);
+  try{ localStorage.setItem('cermin_qolbu_reminder_'+t, on?'1':'0'); }catch(e){}
+  if(on && 'Notification' in window && Notification.permission!=='granted'){ Notification.requestPermission(); }
+  updateReminderUI();
+}
+function buatPesanWA(){
+  var j=loadJurnal(); var hari=j[todayKey()]||{};
+  var sy=document.getElementById('inSyukur'); var pb=document.getElementById('inPerbaiki');
+  var syukur=(sy&&sy.value)||hari.syukur||'(belum diisi - isi dulu ya)';
+  var perbaiki=(pb&&pb.value)||hari.perbaiki||'(belum diisi)';
+  var mood=hari.mood? (META[hari.mood]?META[hari.mood].label:hari.mood) : 'Belum cek hati hari ini';
+  return 'Assalamu\'alaikum, ini Jurnal Cermin Qolbu saya malam ini:\n\n🪞 Cermin hari ini: '+mood+'\n\n🤲 Yang saya syukuri hari ini: '+syukur+'\n\n🌙 Besok yang mau saya perbaiki: '+perbaiki+'\n\nYa Allah, bersihkan cerminku. Jangan biarkan debu kemarin menutupi cahaya-Mu hari ini.';
+}
+function kirimWA(){
+  var no=getWa();
+  if(!no){ if(confirm('Nomor WA belum diisi. Isi dulu di Pengaturan Pengingat?')){ location.hash='#pWA'; } return; }
+  window.open('https://wa.me/'+no+'?text='+encodeURIComponent(buatPesanWA()),'_blank');
+}
+function renderJurnal(){
+  var list=document.getElementById('jurnalList'); if(!list) return;
+  var j=loadJurnal(); var keys=Object.keys(j).sort().slice(-7);
+  var empty=document.getElementById('jurnalEmpty'); var info=document.getElementById('jurnalInfo');
+  list.innerHTML='';
+  if(keys.length===0){ if(empty) empty.style.display='block'; if(info) info.textContent='Kamu belum cek hati. Pilih 1 perasaan di halaman Cek Hati, maka riwayatmu akan muncul di sini.'; return; }
+  if(empty) empty.style.display='none';
+  if(info) info.textContent='Total '+keys.length+' hari tercatat. Ini riwayat hatimu sendiri, bukan contoh.';
+  var namaHari=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  keys.forEach(function(k){ var item=j[k]; var m=META[item.mood]||META.tenang; var parts=k.split('-'); var d=new Date(parts[0],parts[1]-1,parts[2]); var isToday=(k===todayKey()); var div=document.createElement('div'); div.className='mini'+(isToday?' today':''); div.innerHTML='<div class="n">'+m.emo+'</div><b>'+namaHari[d.getDay()]+(isToday?' • Hari Ini':'')+'</b><span class="date">'+k+'</span><small>'+m.label+'</small>'+(item.syukur?'<small style="color:var(--gold2)">Syukur: '+item.syukur+'</small>':''); list.appendChild(div); });
+}
+function hapusJurnal(){ if(confirm('Hapus semua riwayat jurnal?')){ try{localStorage.removeItem('cermin_qolbu_jurnal');}catch(e){} renderJurnal(); } }
+function cekPengingat(){
+  var now=new Date(); var hh=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  if(getReminderOn('pagi') && hh===getJamPagi()){
+    var lastP=''; try{ lastP=localStorage.getItem('cermin_qolbu_last_pagi')||''; }catch(e){}
+    if(lastP!==todayKey()){ try{localStorage.setItem('cermin_qolbu_last_pagi',todayKey());}catch(e){} var msgP='Cek Hati Pagi dulu, cerminmu hari ini gimana?'; if('Notification' in window && Notification.permission==='granted'){ try{ new Notification('Cermin Qolbu - Cek Hati Pagi 🌅', {body: msgP}); }catch(e){} } alert('🌅 Cermin Qolbu:\n\n'+msgP); location.hash='#p2'; }
+  }
+  if(getReminderOn('malam') && hh===getJam()){
+    var last=''; try{ last=localStorage.getItem('cermin_qolbu_last_reminder')||''; }catch(e){}
+    if(last!==todayKey()){ try{localStorage.setItem('cermin_qolbu_last_reminder',todayKey());}catch(e){} var msg='Sudah isi Jurnal Malam belum? Malam ini apa yang kamu syukuri, dan apa yang mau kamu perbaiki besok?'; if('Notification' in window && Notification.permission==='granted'){ try{ new Notification('Cermin Qolbu - Jurnal Malam 🌙', {body: msg}); }catch(e){} } alert('🌙 Cermin Qolbu:\n\n'+msg); location.hash='#p5'; }
+  }
+}
+try{
+  document.addEventListener('click', function(e){ var opt=e.target.closest && e.target.closest('[data-save]'); if(opt){ var j=loadJurnal(); j[todayKey()]={mood:opt.getAttribute('data-save'), at:Date.now()}; saveJurnal(j); setTimeout(renderJurnal,50); } });
+  var btnMalam=document.getElementById('btnSaveMalam');
+  if(btnMalam) btnMalam.addEventListener('click', function(){ var s=document.getElementById('inSyukur'); var p=document.getElementById('inPerbaiki'); var j=loadJurnal(); var k=todayKey(); if(!j[k]) j[k]={mood:'tenang',at:Date.now()}; if(s&&s.value) j[k].syukur=s.value.slice(0,80); if(p&&p.value) j[k].perbaiki=p.value.slice(0,80); saveJurnal(j); setTimeout(renderJurnal,50); });
+  var selJam=document.getElementById('inJam'); if(selJam) selJam.addEventListener('change', function(){ try{localStorage.setItem('cermin_qolbu_jam',selJam.value);}catch(e){} updateReminderUI(); });
+  var selPagi=document.getElementById('inJamPagi'); if(selPagi) selPagi.addEventListener('change', function(){ try{localStorage.setItem('cermin_qolbu_jam_pagi',selPagi.value);}catch(e){} updateReminderUI(); });
+  window.addEventListener('hashchange', function(){ renderJurnal(); updateReminderUI(); });
+  updateReminderUI(); renderJurnal();
+  setInterval(cekPengingat, 30000);
+}catch(e){}
+</script>
+</body>
+</html>
